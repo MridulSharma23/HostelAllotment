@@ -6,8 +6,6 @@
 using namespace std;
 
 
-//                   APPLICATION CLASS
-
 
 class Application
 {
@@ -30,6 +28,10 @@ public:
 
     // ---------------------- Getters --------------------------
     string getAppId() const { return appId; }
+
+    // Generic ID getter (for templates and map index)
+    string getId() const { return appId; }
+
     string getStudentId() const { return studentId; }
     string getRoomId() const { return roomId; }
     string getStatus() const { return status; }
@@ -61,7 +63,7 @@ public:
         cout << "------------------------------------\n";
     }
 
-   
+    // ---------------------- CSV Support -----------------------
 
     string summary() const
     {

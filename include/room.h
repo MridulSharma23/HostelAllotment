@@ -6,9 +6,6 @@
 using namespace std;
 
 
-//                        ROOM CLASS
-
-
 class Room
 {
 private:
@@ -28,6 +25,10 @@ public:
 
     // ---------------------- Getters --------------------------
     string getRoomId() const { return roomId; }
+
+    // Generic ID getter (for templates and map index)
+    string getId() const { return roomId; }
+
     int getCapacity() const { return capacity; }
     int getOccupied() const { return occupied; }
 
