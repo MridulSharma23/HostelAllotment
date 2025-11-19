@@ -1,0 +1,4 @@
+s1,Mridul,2,R101
+s2,Anhad,1,R102
+s3,Tulika,3,R201
+s4,Mannat,1,
