@@ -5,38 +5,19 @@
 #include <string>
 using namespace std;
 
-//                ABSTRACT BASE CLASS: Person
-class Person
+class Student
 {
 public:
-    // Pure virtual functions 
-    virtual string getId() const = 0;
-    virtual string summary() const = 0;
-
-    // Virtual destructor 
-    virtual ~Person() {}
-};
-
-
-//                       STUDENT CLASS
-
-// This class inherits from Person and represents a student
-// in your Hostel Allotment System.
-// It contains: ID, Name, Year of study, Room allocation.
-class Student : public Person
-{
+    string id;
+    string name;
+    int year;
 private:
-    string id;       // Student ID (unique)
-    string name;     // Student name
-    int year;        // Year of study (1/2/3/4)
-    string roomId;   // Room assigned (empty if not assigned)
+    string roomId;
 
 public:
+    Student() {}
 
-
-    //                    Constructor
-    
-    Student(string i, string n, int y, string r = "")
+    Student(string i, string n, int y, string r)
     {
         id = i;
         name = n;
@@ -44,110 +25,46 @@ public:
         roomId = r;
     }
 
-    
-    //          Overrides the abstract functions of Person.
-    string getId() const override
-    {
-        return id;
-    }
+    // Getter for ID (required by FileManager)
+    string getId() const { return id; }
 
-    
-    string summary() const override
-    {
-        return id + "," + name + "," + to_string(year) + "," + roomId;
-    }
-
-
-    string toCSV() const
-    {
-        return summary();
-    }
-
-    // -------------------------------------------------------
-    //                     Getters
-    // -------------------------------------------------------
-    string getName() const { return name; }
-    int getYear() const { return year; }
+    // Getter for room
     string getRoomId() const { return roomId; }
 
-    // -------------------------------------------------------
-    //                     Setters
-    // -------------------------------------------------------
-    // Update room ID
-    void setRoomId(string r)
-    {
-        roomId = r;
-    }
+    // ⭐ Setter added (IMPORTANT FIX)
+    void setRoomId(string r) { roomId = r; }
 
-    // Update student name
-    void updateName(string newName)
-    {
-        name = newName;
-    }
-
-    // Update student year
-    void updateYear(int newYear)
-    {
-        year = newYear;
-    }
-
-    
-
-    // Check if student already has a room
-    bool hasRoom() const
-    {
-        return roomId != "";
-    }
-
-    // Remove the room allocation
-    void clearRoom()
-    {
-        roomId = "";
-    }
-
-    // Business logic: Check if student is senior
-    bool isSenior() const
-    {
-        return year >= 3; // 3rd or 4th year = senior
-    }
-
-    // Check if 2 IDs match (useful for searching)
-    bool compareId(string otherId) const
-    {
-        return id == otherId;
-    }
-
-    // Display student details in clean format
+    // Display info
     void display() const
     {
-        cout << "------------------------------------\n";
-        cout << "Student ID   : " << id << endl;
-        cout << "Name         : " << name << endl;
-        cout << "Year         : " << year << endl;
-        if (roomId == "")
-            cout << "Room         : Not allotted\n";
-        else
-            cout << "Room         : " << roomId << endl;
-        cout << "------------------------------------\n";
+        cout << "ID: " << id
+             << " | Name: " << name
+             << " | Year: " << year
+             << " | Room: " << roomId << endl;
     }
 
-    // Format expected:
-    // id,name,year,roomId
-    // Example:
-    // s1,Ananya,2,R101
-    static Student fromString(string line);
-
-   
-    //     Operator overloading for printing << 
-   
-    friend ostream &operator<<(ostream &out, const Student &s)
+    // Convert CSV → Student object
+    static Student fromString(string line)
     {
-        out << "Student[ID=" << s.id
-            << ", Name=" << s.name
-            << ", Year=" << s.year
-            << ", Room=" << s.roomId
-            << "]";
-        return out;
+        string id, name, yearStr, room;
+        stringstream ss(line);
+
+        getline(ss, id, ',');
+        getline(ss, name, ',');
+        getline(ss, yearStr, ',');
+        getline(ss, room, ',');
+
+        int y = 0;
+        if (yearStr.size() > 0 && isdigit(yearStr[0]))
+            y = yearStr[0] - '0';
+
+        return Student(id, name, y, room);
+    }
+
+    // Convert Student → CSV
+    string summary() const
+    {
+        return id + "," + name + "," + to_string(year) + "," + roomId;
     }
 };
 
