@@ -2,22 +2,22 @@
 #define APPLICATION_H
 
 #include <iostream>
+#include <sstream>
 #include <string>
 using namespace std;
 
-
-
 class Application
 {
-private:
-    string appId;       // Unique application ID (ex: APP001)
-    string studentId;   // The student who applied
-    string roomId;      // Preferred room
-    string status;      // PENDING, APPROVED, REJECTED
-
 public:
+    string appId;
+    string studentId;
+    string roomId;
+    string status;
 
-    // ---------------------- Constructor ----------------------
+    // Default constructor
+    Application() {}
+
+    // Correct 4-argument constructor
     Application(string a, string sId, string rId, string st = "PENDING")
     {
         appId = a;
@@ -26,61 +26,40 @@ public:
         status = st;
     }
 
-    // ---------------------- Getters --------------------------
-    string getAppId() const { return appId; }
-
-    // Generic ID getter (for templates and map index)
+    // Needed by FileManager
     string getId() const { return appId; }
-
     string getStudentId() const { return studentId; }
     string getRoomId() const { return roomId; }
-    string getStatus() const { return status; }
 
-    // ---------------------- Status Controls -------------------
-    void approve()
-    {
-        status = "APPROVED";
-    }
+    void approve() { status = "APPROVED"; }
+    void reject() { status = "REJECTED"; }
 
-    void reject()
-    {
-        status = "REJECTED";
-    }
-
-    void reset()
-    {
-        status = "PENDING";
-    }
-
-    // ---------------------- Display ---------------------------
     void display() const
     {
-        cout << "------------------------------------\n";
-        cout << "Application ID : " << appId << endl;
-        cout << "Student ID     : " << studentId << endl;
-        cout << "Room Requested : " << roomId << endl;
-        cout << "Status         : " << status << endl;
-        cout << "------------------------------------\n";
+        cout << "AppID: " << appId
+             << " | Student: " << studentId
+             << " | Room: " << roomId
+             << " | Status: " << status << endl;
     }
 
-    // ---------------------- CSV Support -----------------------
+    // Convert CSV line ---> Application object
+    static Application fromString(string line)
+    {
+        string a, sId, rId, st;
+        stringstream ss(line);
 
+        getline(ss, a, ',');
+        getline(ss, sId, ',');
+        getline(ss, rId, ',');
+        getline(ss, st, ',');
+
+        return Application(a, sId, rId, st);
+    }
+
+    // Convert Application ---> CSV line
     string summary() const
     {
         return appId + "," + studentId + "," + roomId + "," + status;
-    }
-
-    // Convert CSV → Application object
-    static Application fromString(string line);
-
-    // ---------------------- Operator Overloading --------------
-    friend ostream &operator<<(ostream &out, const Application &a)
-    {
-        out << "Application[ID=" << a.appId
-            << ", Student=" << a.studentId
-            << ", Room=" << a.roomId
-            << ", Status=" << a.status << "]";
-        return out;
     }
 };
 
