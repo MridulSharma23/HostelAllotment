@@ -1,101 +1,41 @@
 #ifndef ROOM_H
 #define ROOM_H
 
-#include <iostream>
 #include <string>
+#include <sstream>
+#include <iostream>
 using namespace std;
 
-
-class Room
-{
-private:
-    string roomId;     // Example: R101
-    int capacity;      // Total beds
-    int occupied;      // Students currently living
-
+class Room {
 public:
+    string roomId;
+    int capacity;
+    int occupied;
 
-    // ---------------------- Constructor ----------------------
+    // Default constructor REQUIRED for map[]
+    Room() : roomId(""), capacity(0), occupied(0) {}
+
     Room(string id, int cap, int occ)
-    {
-        roomId = id;
-        capacity = cap;
-        occupied = occ;
+        : roomId(id), capacity(cap), occupied(occ) {}
+
+    bool isAvailable() const { return occupied < capacity; }
+
+    void addStudent() { if (occupied < capacity) occupied++; }
+
+    static Room fromString(string line) {
+        string id, c, o;
+        stringstream ss(line);
+        getline(ss, id, ',');
+        getline(ss, c, ',');
+        getline(ss, o, ',');
+        return Room(id, stoi(c), stoi(o));
     }
 
-    // ---------------------- Getters --------------------------
-    string getRoomId() const { return roomId; }
-
-    // Generic ID getter (for templates and map index)
-    string getId() const { return roomId; }
-
-    int getCapacity() const { return capacity; }
-    int getOccupied() const { return occupied; }
-
-    // ---------------------- Room Logic ------------------------
-
-    // Check if room has empty beds
-    bool isAvailable() const
-    {
-        return occupied < capacity;
-    }
-
-    // Try adding a student if room has space
-    bool addStudent()
-    {
-        if (isAvailable())
-        {
-            occupied++;
-            return true;
-        }
-        return false;
-    }
-
-    // Try removing a student if someone is living
-    bool removeStudent()
-    {
-        if (occupied > 0)
-        {
-            occupied--;
-            return true;
-        }
-        return false;
-    }
-
-    // Display full room information
-    void display() const
-    {
-        cout << "------------------------------------\n";
-        cout << "Room ID    : " << roomId << endl;
-        cout << "Capacity   : " << capacity << endl;
-        cout << "Occupied   : " << occupied << endl;
-
-        if (isAvailable())
-            cout << "Status     : Available\n";
-        else
-            cout << "Status     : Full\n";
-
-        cout << "------------------------------------\n";
-    }
-
-    // Convert object → CSV string
-    string summary() const
-    {
+    string summary() const {
         return roomId + "," + to_string(capacity) + "," + to_string(occupied);
     }
 
-    // Convert CSV string → Room object
-    static Room fromString(string line);
-
-    // For printing with cout
-    friend ostream& operator<<(ostream& out, const Room& r)
-    {
-        out << "Room[ID=" << r.roomId
-            << ", Capacity=" << r.capacity
-            << ", Occupied=" << r.occupied
-            << "]";
-        return out;
-    }
+    string getId() const { return roomId; }
 };
 
 #endif

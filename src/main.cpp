@@ -10,7 +10,6 @@ using namespace std;
 
 int main()
 {
-   
     map<string, Student> students =
         FileManager::loadAll<Student>("data/students.txt");
 
@@ -22,7 +21,6 @@ int main()
 
     map<string, Application> apps =
         FileManager::loadAll<Application>("data/applications.txt");
-
 
     cout << "=============================================\n";
     cout << "     HOSTEL ALLOTMENT MANAGEMENT SYSTEM\n";
@@ -50,25 +48,19 @@ int main()
         case 1:
             cout << "\n----- STUDENTS -----\n";
             for (auto &p : students)
-            {
                 p.second.display();
-            }
             break;
 
         case 2:
             cout << "\n----- ROOMS -----\n";
             for (auto &p : rooms)
-            {
                 p.second.display();
-            }
             break;
 
         case 3:
             cout << "\n----- APPLICATIONS -----\n";
             for (auto &p : apps)
-            {
                 p.second.display();
-            }
             break;
 
         case 4:
@@ -87,12 +79,14 @@ int main()
             string studentId = ap.getStudentId();
             string roomId = ap.getRoomId();
 
-            // Try to assign room
             if (rooms[roomId].isAvailable())
             {
                 rooms[roomId].addStudent();
                 ap.approve();
-                students[studentId].roomId = roomId; // student now lives there
+
+                // ⭐ FIXED: use setter, NOT direct access
+                students[studentId].setRoomId(roomId);
+
                 cout << "Application Approved & Room Assigned!\n";
             }
             else
@@ -127,9 +121,6 @@ int main()
         }
     }
 
-    // ============================================================
-    //                SAVE CHANGES BACK TO FILES
-    // ============================================================
     FileManager::saveAll<Student>(students, "data/students.txt");
     FileManager::saveAll<Admin>(admins, "data/admins.txt");
     FileManager::saveAll<Room>(rooms, "data/rooms.txt");
@@ -139,3 +130,4 @@ int main()
 
     return 0;
 }
+
